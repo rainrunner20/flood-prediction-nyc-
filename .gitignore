@@ -1,0 +1,10 @@
+# Local Python environments and caches; old historical copies remain tracked.
+.venv/
+venv/
+myenv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+reports/
+.ipynb_checkpoints/

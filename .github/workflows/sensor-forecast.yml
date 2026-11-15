@@ -1,0 +1,41 @@
+name: Sensor forecast regression
+
+on:
+  pull_request:
+    paths:
+      - "sensor_forecast/**"
+      - "tests/**"
+      - "requirements-forecast.txt"
+      - "Week 2&3/flood_sensor_data_Zhang.csv"
+      - ".github/workflows/sensor-forecast.yml"
+  push:
+    branches: [main]
+    paths:
+      - "sensor_forecast/**"
+      - "tests/**"
+      - "requirements-forecast.txt"
+      - "Week 2&3/flood_sensor_data_Zhang.csv"
+      - ".github/workflows/sensor-forecast.yml"
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements-forecast.txt
+      - run: python -m pip install -r requirements-forecast.txt
+      - run: python -m unittest discover -s tests -v
+      - name: Run against the historical sensor CSV
+        run: >-
+          python -m sensor_forecast
+          --input "Week 2&3/flood_sensor_data_Zhang.csv"
+          --output reports/metrics.json
+          --html reports/dashboard.html
+          --sensor fs-00096
